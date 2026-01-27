@@ -1,11 +1,17 @@
-import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Layout } from "./components/layout/Layout";
 import PrebillLanding from "./components/PrebillLanding";
 
 function App() {
   return (
-    <div>
-      <PrebillLanding />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<PrebillLanding />} />
+          <Route path="prebills" element={<PrebillLanding />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

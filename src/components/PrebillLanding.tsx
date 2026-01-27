@@ -314,23 +314,7 @@ function PrebillLandingContent() {
   };
 
   return (
-    <div className="p-6 bg-xtnd-light min-h-screen">
-      <nav className="text-sm text-xtnd-dark mb-2 flex items-center gap-2">
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-        </svg>
-        <span className="text-xtnd-dark">AR Collections</span>
-        <span className="text-xtnd-dark">&gt;</span>
-        <span className="text-xtnd-dark font-medium">Pre-Bills</span>
-      </nav>
-      <h1 className="text-2xl font-semibold text-xtnd-dark">
-        Prebilling Reports
-      </h1>
-      <i className="text-sm text-gray-600 fas fa-file-invoice-dollar">
-        View, review, and edit prebilling reports throughout the billing
-        lifecycle.
-      </i>
-
+    <>
       <FilterDrawer
         open={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
@@ -339,24 +323,22 @@ function PrebillLandingContent() {
         <FilterContent clients={allClients} statuses={allStatuses} />
       </FilterDrawer>
 
-      <div className="mt-6">
-        <ResultsTable
-          invoices={filtered}
-          perPage={25}
-          sortBy={sortBy || undefined}
-          sortDir={sortDir}
-          onRequestSort={onRequestSort}
-          groupByClient={filters.groupByClient !== false}
-          onGroupingChange={(grouped) => {
-            const newFilters = { ...filters, groupByClient: grouped };
-            setDraft(newFilters);
-            setApplied(newFilters);
-          }}
-          filterButton={<FilterButton onClick={() => setIsFilterOpen(true)} />}
-          filterChips={<FilterChips labels={filterLabels} />}
-        />
-      </div>
-    </div>
+      <ResultsTable
+        invoices={filtered}
+        perPage={25}
+        sortBy={sortBy || undefined}
+        sortDir={sortDir}
+        onRequestSort={onRequestSort}
+        groupByClient={filters.groupByClient !== false}
+        onGroupingChange={(grouped) => {
+          const newFilters = { ...filters, groupByClient: grouped };
+          setDraft(newFilters);
+          setApplied(newFilters);
+        }}
+        filterButton={<FilterButton onClick={() => setIsFilterOpen(true)} />}
+        filterChips={<FilterChips labels={filterLabels} />}
+      />
+    </>
   );
 }
 

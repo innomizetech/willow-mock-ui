@@ -1,6 +1,6 @@
-# CaringUp Revamp - RPM Ecosystem Website
+# Willow Prebill Mock UI
 
-A modern, enterprise-focused React.js website for CaringUp's Remote Patient Monitoring (RPM) ecosystem, targeting hospitals, insurers, corporates, TPAs, and monitoring-as-a-service partners.
+Willow Prebill Mock UI
 
 ## Tech Stack
 
@@ -8,15 +8,6 @@ A modern, enterprise-focused React.js website for CaringUp's Remote Patient Moni
 - **Vite** - Fast build tool and dev server
 - **TailwindCSS** - Utility-first CSS framework
 - **Custom Animations** - Canvas-based data visualization with animated nodes
-
-## Features
-
-- **Full-bleed Hero Section** - Dark gradient background with centered/left-aligned headline
-- **Animated Data Visualization** - Subtle pulsing nodes and connecting lines in the hero
-- **Enterprise Typography** - Large, geometric sans-serif with heavy weights and generous spacing
-- **Brand Colors** - CaringUp logo colors + Teal/Cyan accents
-- **Responsive Design** - Mobile-first approach with breakpoints
-- **Two CTAs** - Primary solid button and secondary ghost button
 
 ## Getting Started
 
@@ -27,11 +18,13 @@ A modern, enterprise-focused React.js website for CaringUp's Remote Patient Moni
 ### Installation
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -62,25 +55,17 @@ The built files will be in the `dist` directory.
 └── package.json                  # Dependencies
 ```
 
-## Customization
-
-### Colors
-
-Edit `tailwind.config.js` to adjust the CaringUp brand colors:
-- `caringup.primary` - Primary brand color
-- `caringup.secondary` - Secondary brand color
-- `caringup.accent` - Teal/Cyan accent color
-- `caringup.dark` - Deep navy for hero background
-
 ### Typography
 
 The hero uses large geometric sans-serif fonts. Adjust in `tailwind.config.js`:
+
 - `fontSize.hero` - Desktop hero text size
 - `fontSize.hero-mobile` - Mobile hero text size
 
 ### Animations
 
 The data visualization animation can be customized in `src/components/DataVisualization.jsx`:
+
 - `nodeCount` - Number of animated nodes
 - Animation speed and behavior
 
@@ -94,4 +79,3 @@ The data visualization animation can be customized in `src/components/DataVisual
 ## License
 
 Proprietary - CaringUp
-

@@ -33,6 +33,7 @@ const FilterDrawer = ({
           Reset
         </Button>
         <Button
+          variant="primary"
           onClick={() => {
             apply();
             onClose();

@@ -149,6 +149,7 @@ export default function ResultsTable({
                   value={viewOptions.find((opt) => opt.value === "all")}
                   onChange={handleViewChange}
                   placeholder="Select View"
+                  size="sm"
                   fullWidth={true}
                 />
               </div>
