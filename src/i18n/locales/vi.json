@@ -1,0 +1,180 @@
+{
+  "nav": {
+    "products": "Sản phẩm",
+    "solutions": "Giải pháp",
+    "evidence": "Bằng chứng",
+    "partners": "Đối tác",
+    "company": "Công ty",
+    "wecare": "WeCare"
+  },
+  "hero": {
+    "title": "Quản lý Bệnh tật và Rủi ro",
+    "subtitle": "Chủ động. Quy mô lớn",
+    "description": "Quản lý liên tục các tình trạng mãn tính và phức tạp—được hỗ trợ bởi nền tảng giám sát từ xa động được thiết kế cho các hệ sinh thái chăm sóc sức khỏe có nguồn lực hạn chế.",
+    "ctaPrimary": "Yêu cầu Demo",
+    "ctaSecondary": "Tìm hiểu thêm"
+  },
+  "trustedBy": {
+    "title": "Được tin cậy trên toàn Hệ sinh thái Chăm sóc Sức khỏe",
+    "seeImpact": "Xem Tác động của Chúng tôi →",
+    "categories": {
+      "hospitals": "Bệnh viện",
+      "insurers": "Nhà bảo hiểm",
+      "monitoringProviders": "Nhà cung cấp Giám sát",
+      "strategicPartners": "Đối tác Chiến lược"
+    }
+  },
+  "platform": {
+    "title": "Nền tảng CaringUp – Sự khác biệt của RPM Động",
+    "explore": "Khám phá Nền tảng →",
+    "activeCare": {
+      "title": "Hơn cả Giám sát – Quản lý Chăm sóc Chủ động",
+      "description": "RPM truyền thống chỉ thu thập dữ liệu. CaringUp biến nó thành các cuộc trò chuyện, can thiệp và quyết định rõ ràng hơn.",
+      "features": {
+        "compliance": {
+          "title": "Tuân thủ Điều trị",
+          "description": "Tỷ lệ tuân thủ cao nhất quán trên các tình trạng đã được chứng minh"
+        },
+        "communication": {
+          "title": "Giao tiếp 2 Chiều",
+          "description": "Tin nhắn bảo mật giữa bệnh nhân và đội ngũ chăm sóc"
+        },
+        "collaboration": {
+          "title": "Hợp tác Lâm sàng",
+          "description": "Ghi chú, phân loại và phối hợp nhóm ở một nơi"
+        },
+        "alerts": {
+          "title": "Cảnh báo & Tăng cấp Thông minh",
+          "description": "Từ dữ liệu đến hành động với các quy trình làm việc có cấu trúc"
+        }
+      }
+    },
+    "careaide": {
+      "title": "CareAide - Tương tác Bệnh nhân",
+      "subtitle": "Độ phức tạp, Được đơn giản hóa cho Bệnh nhân từ Nhiều Nền tảng Khác nhau",
+      "features": {
+        "medication": {
+          "title": "Quản lý Thuốc & Sức khỏe",
+          "description": "Giữ cho nó đơn giản là phức tạp nhưng chúng tôi làm tốt."
+        },
+        "family": {
+          "title": "Chăm sóc Gia đình Từ xa",
+          "description": "Khả năng hiển thị, quản lý & tăng cấp từ xa cho người chăm sóc"
+        },
+        "motivation": {
+          "title": "Động lực & Phần thưởng",
+          "description": "Được thiết kế để duy trì sự tuân thủ"
+        }
+      },
+      "additional": "Khả năng bổ sung: theo dõi dấu hiệu sinh tồn & triệu chứng, xu hướng hỗ trợ AI, lưu trữ tài liệu bảo mật, hướng dẫn lối sống cá nhân hóa"
+    },
+    "wecare": {
+      "title": "WeCare – Nền tảng Phối hợp Chăm sóc",
+      "subtitle": "Một Nền tảng Thống nhất, Mọi Đối tác trong Chăm sóc",
+      "features": {
+        "providers": {
+          "title": "Nhà cung cấp & Hệ thống Y tế",
+          "description": "Giám sát bệnh nhân mãn tính với các tăng cấp có cấu trúc"
+        },
+        "payers": {
+          "title": "Người thanh toán (Bảo hiểm, TPA, HMO)",
+          "description": "Giám sát thành viên rủi ro cao để kiểm soát chi phí và quản lý rủi ro"
+        },
+        "msp": {
+          "title": "Nhà cung cấp Dịch vụ Giám sát",
+          "description": "Cung cấp dịch vụ RPM cho nhiều khách hàng"
+        },
+        "government": {
+          "title": "Cơ quan Chính phủ & Y tế Công cộng",
+          "description": "Giám sát bệnh tật và quản lý chương trình quy mô quốc gia cho NCD, HIV và TB"
+        }
+      }
+    }
+  },
+  "msp": {
+    "title": "Dành cho Nhà cung cấp Dịch vụ Giám sát",
+    "subtitle": "Khởi động & Mở rộng Dịch vụ Giám sát của Bạn—Không cần Hạ tầng",
+    "benefits": {
+      "days": {
+        "label": "Ngày",
+        "description": "Ra thị trường trong vài ngày"
+      },
+      "multiple": {
+        "label": "Nhiều",
+        "description": "Phục vụ nhiều khách hàng từ một nền tảng doanh nghiệp duy nhất"
+      },
+      "scale": {
+        "label": "Quy mô",
+        "description": "Mở rộng hoạt động mà không có chi phí chung"
+      }
+    },
+    "cta": "Trở thành Đối tác Giám sát →"
+  },
+  "evidence": {
+    "title": "Bằng chứng & Xác thực",
+    "subtitle": "Một trong những Thử nghiệm Ngẫu nhiên Có Đối chứng RPM Lớn nhất Châu Á",
+    "metrics": {
+      "patients": {
+        "value": "1,100+",
+        "description": "RCT đa địa điểm với hơn 1,100 bệnh nhân"
+      },
+      "adherence": {
+        "value": ">95%",
+        "description": "Tuân thủ thuốc (PDC) được duy trì trong 6 tháng (so với 66% trong nhóm đối chứng)"
+      },
+      "ejection": {
+        "value": "50%",
+        "description": "Cải thiện phân suất tống máu (EF%) ở bệnh nhân suy tim so với ban đầu"
+      },
+      "costs": {
+        "value": "37%",
+        "description": "Giảm tổng chi phí y tế cho bệnh nhân tiểu đường so với nhóm đối chứng"
+      }
+    },
+    "cta": "Xem Bằng chứng →"
+  },
+  "deployment": {
+    "title": "Triển khai & Cấu trúc Giá",
+    "subtitle": "RPM Doanh nghiệp. Đưa Bệnh nhân Đầu tiên của Bạn vào trong Vài phút.",
+    "description": "Không có Tích hợp Phức tạp. Không Thiết lập Dữ liệu. Không Đau đầu về CNTT.",
+    "pricingTitle": "Mô hình Giá & Triển khai Linh hoạt",
+    "models": {
+      "activePatient": {
+        "title": "Bệnh nhân Hoạt động",
+        "description": "Thanh toán cho mỗi bệnh nhân hoạt động hoặc được giám sát"
+      },
+      "perMember": {
+        "title": "Theo Thành viên",
+        "description": "Chi phí cố định; mỗi nhân viên hoặc người được bảo hiểm"
+      },
+      "whitelabel": {
+        "title": "CareAide Nhãn trắng",
+        "description": "Dành cho khách hàng có khối lượng lớn quan tâm đến thương hiệu"
+      },
+      "dedicated": {
+        "title": "Phiên bản Dành riêng",
+        "description": "Nền tảng riêng của bạn, theo cách của bạn."
+      }
+    }
+  },
+  "cta": {
+    "title": "Sẵn sàng Chuyển từ Giám sát Thụ động sang Quản lý Chủ động?",
+    "button": "Yêu cầu Demo Cá nhân hóa của Bạn"
+  },
+  "footer": {
+    "description": "Giải pháp RPM doanh nghiệp cho các thị trường chăm sóc sức khỏe mới nổi.",
+    "products": "Sản phẩm",
+    "platformOverview": "Tổng quan Nền tảng",
+    "wecare": "WeCare",
+    "careaide": "CareAide",
+    "company": "Công ty",
+    "about": "Về chúng tôi",
+    "contact": "Liên hệ",
+    "partners": "Đối tác",
+    "resources": "Tài nguyên",
+    "evidence": "Bằng chứng",
+    "solutions": "Giải pháp",
+    "copyright": "CaringUp. Bảo lưu mọi quyền."
+  }
+}
+
