@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Button from "./Button";
 import Select, { SelectOption } from "./Select";
 import { Invoice } from "../mock-data";
@@ -201,12 +202,12 @@ export default function ResultsTable({
                   className={`border-b border-gray-100 hover:bg-gray-50 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/30"}`}
                 >
                   <td className="py-3 px-4">
-                    <a
-                      href="#"
+                    <Link
+                      to={`/prebills/${inv.invoiceId}`}
                       className="text-xtnd-blue hover:underline font-medium"
                     >
                       {inv.matter.displayNumber} - {inv.matter.name}
-                    </a>
+                    </Link>
                   </td>
                   <td className="py-3 px-4 text-sm text-xtnd-dark">
                     {inv.billNum}
@@ -401,12 +402,12 @@ export default function ResultsTable({
                         }`}
                       >
                         <td className="py-3 px-4 pl-12">
-                          <a
-                            href="#"
+                          <Link
+                            to={`/prebills/${inv.invoiceId}`}
                             className="text-xtnd-blue hover:underline"
                           >
                             {inv.matter.displayNumber} - {inv.matter.name}
-                          </a>
+                          </Link>
                         </td>
                         <td className="py-3 px-4 text-sm text-xtnd-dark">
                           {inv.billNum}

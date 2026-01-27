@@ -12,6 +12,7 @@ export function Layout() {
   });
 
   const location = useLocation();
+  const isDetailPage = location.pathname.startsWith("/prebills/");
 
   React.useEffect(() => {
     sessionStorage.setItem(
@@ -40,14 +41,16 @@ export function Layout() {
           aria-label="Main content"
         >
           <div className="mb-6">{<Breadcrumbs />}</div>
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-xtnd-dark dark:text-xtnd-white">
-              Prebill
-            </h1>
-            <p className="mt-1 text-sm text-xtnd-dark-500 dark:text-xtnd-light">
-              Review and manage pre-bill items before final invoicing
-            </p>
-          </div>
+          {!isDetailPage && (
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold text-xtnd-dark dark:text-xtnd-white">
+                Prebill
+              </h1>
+              <p className="mt-1 text-sm text-xtnd-dark-500 dark:text-xtnd-light">
+                Review and manage pre-bill items before final invoicing
+              </p>
+            </div>
+          )}
           <Outlet />
         </main>
         <Footer />

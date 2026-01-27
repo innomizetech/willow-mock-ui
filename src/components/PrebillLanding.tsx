@@ -345,26 +345,9 @@ function PrebillLandingContent() {
 export default function PrebillLanding() {
   const defaultStart = new Date();
   defaultStart.setDate(1);
-  const defaultEnd = new Date();
-
-  const initialFilters: Filters = {
-    clients: [],
-    statuses: [],
-    startDate: defaultStart.toISOString().slice(0, 10),
-    endDate: defaultEnd.toISOString().slice(0, 10),
-    keyword: "",
-    associateAttorneys: [],
-    responsibleAttorneys: [],
-    billers: [],
-    holdTypes: [],
-    includeLocked: true,
-    includeDeleted: false,
-    onHoldOnly: false,
-    groupByClient: true,
-  };
 
   return (
-    <FilterProvider initialFilters={initialFilters}>
+    <FilterProvider initialFilters={undefined}>
       <PrebillLandingContent />
     </FilterProvider>
   );

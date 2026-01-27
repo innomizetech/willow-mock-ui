@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-export type FilterValues = Record<string, unknown>;
+export type FilterValues = Record<string, unknown> | undefined;
 
 export interface FilterContextValue {
   applied: FilterValues;
