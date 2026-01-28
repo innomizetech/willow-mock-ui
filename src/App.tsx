@@ -5,7 +5,7 @@ import PrebillDetail from "./components/PrebillDetail";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/willow-mock-ui/">
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<PrebillLanding />} />
