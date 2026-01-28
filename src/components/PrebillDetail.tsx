@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, act } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardBody } from "./Card";
 import Button from "./Button";
@@ -51,6 +51,215 @@ interface FeeEntry {
   amount: number;
   noCharge: boolean;
 }
+
+// Mock comment data
+interface Comment {
+  id: string;
+  author: string;
+  authorInitials: string;
+  avatarColor: string;
+  content: string;
+  date: string;
+  time: string;
+}
+
+// Mock activity data
+interface Activity {
+  id: string;
+  type: "status_change" | "edit" | "comment" | "attachment" | "assignment";
+  description: string;
+  user: string;
+  userInitials: string;
+  date: string;
+  time: string;
+  details?: string;
+}
+
+const mockComments: Comment[] = [
+  {
+    id: "1",
+    author: "Jane Smith",
+    authorInitials: "JS",
+    avatarColor: "bg-blue-500",
+    content:
+      "Please review the fee entries for accuracy before finalizing. Some hours seem higher than usual for this type of work.",
+    date: "01/25/2026",
+    time: "2:30 PM",
+  },
+  {
+    id: "2",
+    author: "John Doe",
+    authorInitials: "JD",
+    avatarColor: "bg-green-500",
+    content:
+      "I've verified the hours with the timekeeper. All entries are correct and match the project scope.",
+    date: "01/26/2026",
+    time: "9:15 AM",
+  },
+];
+
+const mockActivities: Activity[] = [
+  {
+    id: "1",
+    type: "status_change",
+    description: "Status changed from Draft to Under Review",
+    user: "Alan Shore",
+    userInitials: "AS",
+    date: "01/27/2026",
+    time: "10:00 AM",
+  },
+  {
+    id: "2",
+    type: "edit",
+    description: "Fee entry modified",
+    user: "Jane Smith",
+    userInitials: "JS",
+    date: "01/26/2026",
+    time: "3:45 PM",
+    details: "Updated hours from 6.0 to 7.5 for entry #1",
+  },
+  {
+    id: "3",
+    type: "attachment",
+    description: "Attachment added",
+    user: "Alan Shore",
+    userInitials: "AS",
+    date: "01/26/2026",
+    time: "11:30 AM",
+    details: "IMG_8406.JPG",
+  },
+  {
+    id: "4",
+    type: "comment",
+    description: "Comment added",
+    user: "John Doe",
+    userInitials: "JD",
+    date: "01/26/2026",
+    time: "9:15 AM",
+  },
+  {
+    id: "5",
+    type: "assignment",
+    description: "Assigned to billing team",
+    user: "System",
+    userInitials: "SY",
+    date: "01/25/2026",
+    time: "8:00 AM",
+    details: "Assigned to Jane Smith for review",
+  },
+];
+
+// Expense attachment interface
+interface ExpenseAttachment {
+  id: string;
+  name: string;
+  size: string;
+  uploadedAt: string;
+}
+
+// Expense entry interface (matches ExpenseDetailPanel)
+interface ExpenseEntry {
+  id: string;
+  date: string;
+  description: string;
+  type: string;
+  originalAmount: number;
+  adjustedAmount?: number;
+  noCharge: boolean;
+  status: "Normal" | "No Charge" | "Edited";
+  attachments: ExpenseAttachment[];
+  createdBy: string;
+  createdAt: string;
+  lastModifiedBy?: string;
+  lastModifiedAt?: string;
+}
+
+const mockExpenseEntries: ExpenseEntry[] = [
+  {
+    id: "1",
+    date: "05/02/2025",
+    description: "Court filing fees for motion to dismiss",
+    type: "Filing Fees",
+    originalAmount: 150.0,
+    noCharge: false,
+    status: "Normal",
+    attachments: [
+      {
+        id: "att-1",
+        name: "filing_receipt.pdf",
+        size: "245 KB",
+        uploadedAt: "05/02/2025",
+      },
+    ],
+    createdBy: "Alan Shore",
+    createdAt: "05/02/2025 09:30 AM",
+  },
+  {
+    id: "2",
+    date: "05/03/2025",
+    description: "Document copying and printing services",
+    type: "Copies/Printing",
+    originalAmount: 37.5,
+    noCharge: false,
+    status: "Normal",
+    attachments: [],
+    createdBy: "Jane Smith",
+    createdAt: "05/03/2025 02:15 PM",
+  },
+  {
+    id: "3",
+    date: "05/04/2025",
+    description: "Expert witness consultation fee - Dr. James Wilson",
+    type: "Expert Fees",
+    originalAmount: 500.0,
+    adjustedAmount: 450.0,
+    noCharge: false,
+    status: "Edited",
+    attachments: [
+      {
+        id: "att-2",
+        name: "expert_invoice.pdf",
+        size: "1.2 MB",
+        uploadedAt: "05/04/2025",
+      },
+    ],
+    createdBy: "Alan Shore",
+    createdAt: "05/04/2025 11:00 AM",
+    lastModifiedBy: "Jane Smith",
+    lastModifiedAt: "05/05/2025 03:30 PM",
+  },
+  {
+    id: "4",
+    date: "05/05/2025",
+    description: "Travel expenses - client meeting downtown",
+    type: "Travel",
+    originalAmount: 45.34,
+    noCharge: true,
+    status: "No Charge",
+    attachments: [],
+    createdBy: "Alan Shore",
+    createdAt: "05/05/2025 06:00 PM",
+  },
+  {
+    id: "5",
+    date: "05/05/2025",
+    description: "Overnight delivery of legal documents to opposing counsel",
+    type: "Delivery/Courier",
+    originalAmount: 68.0,
+    noCharge: false,
+    status: "Normal",
+    attachments: [
+      {
+        id: "att-3",
+        name: "fedex_tracking.pdf",
+        size: "156 KB",
+        uploadedAt: "05/05/2025",
+      },
+    ],
+    createdBy: "Jane Smith",
+    createdAt: "05/05/2025 04:45 PM",
+  },
+];
 
 const mockFeeEntries: FeeEntry[] = [
   {
@@ -114,6 +323,19 @@ export default function PrebillDetail() {
   const [attachmentViewMode, setAttachmentViewMode] = useState<"list" | "grid">(
     "list",
   );
+
+  // Expenses tab state
+  const [expenseSearchText, setExpenseSearchText] = useState("");
+  const [selectedExpense, setSelectedExpense] = useState<ExpenseEntry | null>(
+    null,
+  );
+  const [isExpenseDetailOpen, setIsExpenseDetailOpen] = useState(false);
+  const [expenses, setExpenses] = useState<ExpenseEntry[]>(mockExpenseEntries);
+  const [isExpenseAttachmentsModalOpen, setIsExpenseAttachmentsModalOpen] =
+    useState(false);
+  const [isEditExpenseDescModalOpen, setIsEditExpenseDescModalOpen] =
+    useState(false);
+  const [editingExpenseDesc, setEditingExpenseDesc] = useState("");
 
   // Mock attachment data
   const mockAttachments = [
@@ -443,7 +665,7 @@ export default function PrebillDetail() {
       {activeTab === "fees" && (
         <div className="space-y-6">
           {/* Matter Information Card */}
-          <Card variant="outlined" padding="lg">
+          <Card variant="elevated" padding="lg">
             <CardBody>
               <div className="grid grid-cols-2 gap-x-8 gap-y-4">
                 <div>
@@ -674,6 +896,492 @@ export default function PrebillDetail() {
           </div>
         </div>
       )}
+
+      {/* Expenses Tab */}
+      {activeTab === "expenses" && (
+        <div className="space-y-6">
+          {/* Matter Information Card */}
+          <Card variant="elevated" padding="lg">
+            <CardBody>
+              <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                    Matter:
+                  </label>
+                  <p className="text-sm text-xtnd-dark">
+                    {invoice.matter.displayNumber} - {invoice.matter.name}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                    Billing Address:
+                  </label>
+                  <p className="text-sm text-xtnd-dark">
+                    {invoice.matter.billAttorney.name}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                    Total Expenses:
+                  </label>
+                  <p className="text-sm text-xtnd-dark font-medium">
+                    $
+                    {expenses
+                      .reduce(
+                        (sum, e) =>
+                          sum + (e.adjustedAmount ?? e.originalAmount),
+                        0,
+                      )
+                      .toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                    Billable Expenses:
+                  </label>
+                  <p className="text-sm text-xtnd-dark font-medium">
+                    $
+                    {expenses
+                      .filter((e) => !e.noCharge)
+                      .reduce(
+                        (sum, e) =>
+                          sum + (e.adjustedAmount ?? e.originalAmount),
+                        0,
+                      )
+                      .toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+
+          {/* Search and Actions */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-end gap-4">
+              <div className="relative">
+                <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search expenses..."
+                  value={expenseSearchText}
+                  onChange={(e) => setExpenseSearchText(e.target.value)}
+                  className="pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Expense Entries Table */}
+            <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-xtnd-light border-b-2 border-xtnd-blue">
+                    <tr>
+                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                        <div className="h-12 flex items-center">Date</div>
+                      </th>
+                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                        <div className="h-12 flex items-center">Expenses</div>
+                      </th>
+
+                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                        <div className="h-12 flex items-center">Amount</div>
+                      </th>
+
+                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                        <div className="h-12 flex items-center">
+                          Attachments
+                        </div>
+                      </th>
+                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                        <div className="h-12 flex items-center">Actions</div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {expenses
+                      .filter(
+                        (expense) =>
+                          expense.description
+                            .toLowerCase()
+                            .includes(expenseSearchText.toLowerCase()) ||
+                          expense.type
+                            .toLowerCase()
+                            .includes(expenseSearchText.toLowerCase()),
+                      )
+                      .map((expense) => (
+                        <tr
+                          key={expense.id}
+                          className="border-b border-gray-100 hover:bg-gray-50"
+                          onClick={() => {
+                            setSelectedExpense(expense);
+                            setIsExpenseDetailOpen(true);
+                          }}
+                        >
+                          <td className="py-3 px-4 text-sm text-xtnd-dark">
+                            {expense.date}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-xtnd-dark max-w-xs">
+                            <div className="line-clamp-2">
+                              {expense.description}
+                            </div>
+                          </td>
+
+                          <td className="py-3 px-4 text-sm text-xtnd-dark font-medium">
+                            <div>
+                              $
+                              {(
+                                expense.adjustedAmount ?? expense.originalAmount
+                              ).toFixed(2)}
+                              {expense.adjustedAmount &&
+                                expense.adjustedAmount !==
+                                  expense.originalAmount && (
+                                  <span className="text-xs text-gray-400 line-through ml-2">
+                                    ${expense.originalAmount.toFixed(2)}
+                                  </span>
+                                )}
+                            </div>
+                          </td>
+
+                          <td className="py-3 px-4 text-sm text-xtnd-dark">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedExpense(expense);
+                                setIsExpenseAttachmentsModalOpen(true);
+                              }}
+                              className="flex items-center gap-1 text-xtnd-blue hover:text-xtnd-dark transition-colors"
+                              title="View/Upload Attachments"
+                            >
+                              <HiLink className="h-4 w-4" />
+                              {expense.attachments.length > 0 ? (
+                                <span>{expense.attachments.length}</span>
+                              ) : (
+                                <span className="text-gray-400">0</span>
+                              )}
+                            </button>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedExpense(expense);
+                                  setEditingExpenseDesc(expense.description);
+                                  setIsEditExpenseDescModalOpen(true);
+                                }}
+                                className="text-xtnd-blue hover:text-xtnd-dark transition-colors"
+                                title="Edit Description"
+                              >
+                                <HiPencil className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-red-500 hover:text-red-700 transition-colors"
+                                title="Delete"
+                              >
+                                <HiTrash className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Table Footer with Totals */}
+              <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
+                <div className="flex justify-end gap-8">
+                  <div className="text-sm">
+                    <span className="text-gray-500">Billable Total:</span>{" "}
+                    <span className="font-semibold text-xtnd-dark">
+                      $
+                      {expenses
+                        .filter((e) => !e.noCharge)
+                        .reduce(
+                          (sum, e) =>
+                            sum + (e.adjustedAmount ?? e.originalAmount),
+                          0,
+                        )
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Expense Attachments Modal */}
+      <Modal
+        isOpen={isExpenseAttachmentsModalOpen}
+        onClose={() => {
+          setIsExpenseAttachmentsModalOpen(false);
+          setSelectedExpense(null);
+        }}
+        title="Expense Attachments"
+        size="lg"
+      >
+        {selectedExpense && (
+          <div className="space-y-4">
+            {/* Expense Info */}
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium text-xtnd-dark">
+                  {selectedExpense.type}
+                </span>{" "}
+                - {selectedExpense.description}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                $
+                {(
+                  selectedExpense.adjustedAmount ??
+                  selectedExpense.originalAmount
+                ).toFixed(2)}{" "}
+                • {selectedExpense.date}
+              </p>
+            </div>
+
+            {/* Uploaded Files List */}
+            <div>
+              <h4 className="text-sm font-medium text-xtnd-dark mb-3">
+                Uploaded Files ({selectedExpense.attachments.length})
+              </h4>
+              {selectedExpense.attachments.length === 0 ? (
+                <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                  <HiCloudUpload className="h-10 w-10 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-500">No files uploaded yet</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {selectedExpense.attachments.map((attachment) => (
+                    <div
+                      key={attachment.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-xtnd-blue/10 rounded-lg flex items-center justify-center">
+                          <HiDocumentText className="h-5 w-5 text-xtnd-blue" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-xtnd-dark">
+                            {attachment.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {attachment.size} • Uploaded {attachment.uploadedAt}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="text-xtnd-blue hover:text-xtnd-dark transition-colors p-1"
+                          title="View"
+                        >
+                          <HiEye className="h-4 w-4" />
+                        </button>
+                        <button
+                          className="text-xtnd-blue hover:text-xtnd-dark transition-colors p-1"
+                          title="Download"
+                        >
+                          <HiDownload className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            const updatedExpense = {
+                              ...selectedExpense,
+                              attachments: selectedExpense.attachments.filter(
+                                (a) => a.id !== attachment.id,
+                              ),
+                            };
+                            setSelectedExpense(updatedExpense);
+                            setExpenses(
+                              expenses.map((e) =>
+                                e.id === updatedExpense.id ? updatedExpense : e,
+                              ),
+                            );
+                          }}
+                          className="text-red-500 hover:text-red-700 transition-colors p-1"
+                          title="Delete"
+                        >
+                          <HiTrash className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Upload Section */}
+            <div className="border-t border-gray-200 pt-4">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-xtnd-blue transition-colors cursor-pointer">
+                <HiCloudUpload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 mb-1">
+                  Drag and drop files here, or click to browse
+                </p>
+                <p className="text-xs text-gray-400">
+                  PDF, JPG, PNG up to 10MB
+                </p>
+                <input
+                  type="file"
+                  className="hidden"
+                  id="expense-file-upload"
+                  multiple
+                  onChange={(e) => {
+                    const files = e.target.files;
+                    if (files && files.length > 0) {
+                      const newAttachments = Array.from(files).map(
+                        (file, index) => ({
+                          id: `att-new-${Date.now()}-${index}`,
+                          name: file.name,
+                          size: `${(file.size / 1024).toFixed(1)} KB`,
+                          uploadedAt: new Date().toLocaleDateString(),
+                        }),
+                      );
+                      const updatedExpense = {
+                        ...selectedExpense,
+                        attachments: [
+                          ...selectedExpense.attachments,
+                          ...newAttachments,
+                        ],
+                      };
+                      setSelectedExpense(updatedExpense);
+                      setExpenses(
+                        expenses.map((exp) =>
+                          exp.id === updatedExpense.id ? updatedExpense : exp,
+                        ),
+                      );
+                    }
+                  }}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() =>
+                    document.getElementById("expense-file-upload")?.click()
+                  }
+                >
+                  <HiCloudUpload className="h-4 w-4 mr-2" />
+                  Upload Files
+                </Button>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setIsExpenseAttachmentsModalOpen(false);
+                  setSelectedExpense(null);
+                }}
+              >
+                Done
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Edit Expense Description Modal */}
+      <Modal
+        isOpen={isEditExpenseDescModalOpen}
+        onClose={() => {
+          setIsEditExpenseDescModalOpen(false);
+          setSelectedExpense(null);
+          setEditingExpenseDesc("");
+        }}
+        title="Edit Expense Description"
+        size="md"
+      >
+        {selectedExpense && (
+          <div className="space-y-4">
+            {/* Expense Info */}
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm font-medium text-xtnd-dark">
+                    {selectedExpense.type}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {selectedExpense.date} • $
+                    {(
+                      selectedExpense.adjustedAmount ??
+                      selectedExpense.originalAmount
+                    ).toFixed(2)}
+                  </p>
+                </div>
+                <Badge
+                  variant={
+                    selectedExpense.status === "No Charge"
+                      ? "warning"
+                      : selectedExpense.status === "Edited"
+                        ? "default"
+                        : "success"
+                  }
+                  size="sm"
+                >
+                  {selectedExpense.status}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Description Field */}
+            <div>
+              <label className="block text-sm font-medium text-xtnd-dark mb-2">
+                Expenses
+              </label>
+              <textarea
+                value={editingExpenseDesc}
+                onChange={(e) => setEditingExpenseDesc(e.target.value)}
+                rows={4}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent resize-none"
+                placeholder="Enter expense description..."
+              />
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsEditExpenseDescModalOpen(false);
+                  setSelectedExpense(null);
+                  setEditingExpenseDesc("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  if (selectedExpense) {
+                    const updatedExpense = {
+                      ...selectedExpense,
+                      description: editingExpenseDesc,
+                      status: "Edited" as const,
+                      lastModifiedBy: "Alan Shore",
+                      lastModifiedAt: new Date().toLocaleString(),
+                    };
+                    setExpenses(
+                      expenses.map((e) =>
+                        e.id === updatedExpense.id ? updatedExpense : e,
+                      ),
+                    );
+                    setIsEditExpenseDescModalOpen(false);
+                    setSelectedExpense(null);
+                    setEditingExpenseDesc("");
+                  }
+                }}
+              >
+                Save Changes
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
 
       {/* Summary Tab */}
       {activeTab === "summary" && (
@@ -1829,6 +2537,7 @@ export default function PrebillDetail() {
         activeTab !== "summary" &&
         activeTab !== "notes" &&
         activeTab !== "attachments" &&
+        activeTab !== "expenses" &&
         activeTab !== "general" && (
           <div className="py-12 text-center">
             <p className="text-xtnd-dark-500">
@@ -1886,29 +2595,61 @@ export default function PrebillDetail() {
 
             {/* Comments Tab Content */}
             {activeCommentsTab === "comments" && (
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="h-10 w-10 rounded-full bg-orange-400 flex items-center justify-center text-white font-semibold">
-                    AS
+              <div className="space-y-6">
+                {/* Existing Comments */}
+                {mockComments.map((c) => (
+                  <div key={c.id} className="flex gap-4">
+                    <div className="flex-shrink-0">
+                      <div
+                        className={`h-10 w-10 rounded-full ${c.avatarColor} flex items-center justify-center text-white font-semibold text-sm`}
+                      >
+                        {c.authorInitials}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-medium text-xtnd-dark">
+                          {c.author}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {c.date} at {c.time}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                        {c.content}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex-1">
-                  <div className="mb-2">
-                    <span className="text-sm font-medium text-xtnd-dark">
-                      Alan Shore
-                    </span>
-                  </div>
-                  <textarea
-                    placeholder="Write a comment"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent resize-none"
-                    rows={4}
-                  />
-                  <div className="mt-3">
-                    <Button variant="primary" size="sm">
-                      Save
-                    </Button>
+                ))}
+
+                {/* Divider */}
+                <div className="border-t border-gray-200 pt-6">
+                  {/* New Comment Input */}
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-orange-400 flex items-center justify-center text-white font-semibold text-sm">
+                        AS
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="mb-2">
+                        <span className="text-sm font-medium text-xtnd-dark">
+                          Alan Shore
+                        </span>
+                      </div>
+                      <textarea
+                        placeholder="Write a comment..."
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent resize-none"
+                        rows={3}
+                      />
+                      <div className="mt-3">
+                        <Button variant="primary" size="sm">
+                          Add Comment
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1916,10 +2657,67 @@ export default function PrebillDetail() {
 
             {/* Activities Tab Content */}
             {activeCommentsTab === "activities" && (
-              <div className="py-6 text-center">
-                <p className="text-sm text-xtnd-dark-500">
-                  No activities recorded yet
-                </p>
+              <div className="space-y-4">
+                {mockActivities.map((activity, index) => (
+                  <div key={activity.id} className="flex gap-4 relative">
+                    {/* Timeline line */}
+                    {index < mockActivities.length - 1 && (
+                      <div className="absolute left-5 top-10 w-0.5 h-full bg-gray-200" />
+                    )}
+                    {/* Icon */}
+                    <div className="flex-shrink-0 z-10">
+                      <div
+                        className={`h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-medium ${
+                          activity.type === "status_change"
+                            ? "bg-blue-500"
+                            : activity.type === "edit"
+                              ? "bg-amber-500"
+                              : activity.type === "comment"
+                                ? "bg-green-500"
+                                : activity.type === "attachment"
+                                  ? "bg-purple-500"
+                                  : "bg-gray-500"
+                        }`}
+                      >
+                        {activity.type === "status_change" && (
+                          <HiSync className="h-5 w-5" />
+                        )}
+                        {activity.type === "edit" && (
+                          <HiPencil className="h-5 w-5" />
+                        )}
+                        {activity.type === "comment" && (
+                          <HiChatAlt className="h-5 w-5" />
+                        )}
+                        {activity.type === "attachment" && (
+                          <HiLink className="h-5 w-5" />
+                        )}
+                        {activity.type === "assignment" && (
+                          <HiUsers className="h-5 w-5" />
+                        )}
+                      </div>
+                    </div>
+                    {/* Content */}
+                    <div className="flex-1 pb-6">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-medium text-xtnd-dark">
+                          {activity.description}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <span>by {activity.user}</span>
+                        <span>•</span>
+                        <span>
+                          {activity.date} at {activity.time}
+                        </span>
+                      </div>
+                      {activity.details && (
+                        <p className="mt-2 text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
+                          {activity.details}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
