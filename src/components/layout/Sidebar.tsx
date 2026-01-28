@@ -56,7 +56,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
       items: [
         {
           path: "/prebill",
-          label: "Prebill Queue",
+          label: "Prebilling Reports",
         },
       ],
     },
