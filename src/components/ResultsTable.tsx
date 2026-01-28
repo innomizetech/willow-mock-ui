@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Button from "./Button";
 import Select, { SelectOption } from "./Select";
 import { Invoice } from "../mock-data";
+import Badge from "./Badge";
 
 type Props = {
   invoices: Invoice[];
@@ -16,15 +17,21 @@ type Props = {
   filterChips?: React.ReactNode;
 };
 
-const statusColor: Record<string, string> = {
-  New: "bg-blue-500",
-  Posted: "bg-xtnd-blue",
-  Paid: "bg-gray-500",
-  "Collaboration Edits": "bg-yellow-400",
-  "Review Complete": "bg-yellow-400",
-  "Ready for Final Review": "bg-purple-600",
-  "Ready to Process": "bg-purple-600",
-  "Error on Upload": "bg-red-500",
+const statusVariant = (status: string) => {
+  switch (status) {
+    case "New":
+      return "primary";
+    case "Posted":
+      return "primary";
+    case "Paid":
+      return "secondary";
+    case "Collaboration Edits":
+      return "warning";
+    case "Review Complete":
+      return "warning";
+    default:
+      return "default";
+  }
 };
 
 export default function ResultsTable({
@@ -237,13 +244,9 @@ export default function ResultsTable({
                     })}
                   </td>
                   <td className="py-3 px-4">
-                    <span
-                      className={`px-2 py-1 rounded text-white text-xs font-medium ${
-                        statusColor[inv.status] || "bg-gray-400"
-                      }`}
-                    >
+                    <Badge variant={statusVariant(inv.status)} size="sm">
                       {inv.status}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="py-3 px-4 text-sm text-xtnd-dark"></td>
                 </tr>
@@ -437,13 +440,9 @@ export default function ResultsTable({
                           })}
                         </td>
                         <td className="py-3 px-4">
-                          <span
-                            className={`px-2 py-1 rounded text-white text-xs font-medium ${
-                              statusColor[inv.status] || "bg-gray-400"
-                            }`}
-                          >
+                          <Badge variant={statusVariant(inv.status)} size="sm">
                             {inv.status}
-                          </span>
+                          </Badge>
                         </td>
                         <td className="py-3 px-4"></td>
                       </tr>

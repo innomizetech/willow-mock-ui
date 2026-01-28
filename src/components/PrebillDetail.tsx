@@ -35,6 +35,7 @@ import { AiOutlineSwap } from "react-icons/ai";
 
 import { invoicesMockData } from "../mock-data";
 import DatePicker from "./DatePicker";
+import Select from "./Select";
 
 // Mock fee entry data
 interface FeeEntry {
@@ -1313,17 +1314,18 @@ export default function PrebillDetail() {
               <div className="space-y-4">
                 {/* Hold Type */}
                 <div>
-                  <label className="block text-sm font-medium text-xtnd-dark mb-2">
-                    Hold Type
-                    <span className="ml-1 text-gray-400 cursor-help">ⓘ</span>
-                  </label>
-                  <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent">
-                    <option value="">Select hold type</option>
-                    <option value="client-request">Client Request</option>
-                    <option value="billing-review">Billing Review</option>
-                    <option value="dispute">Dispute</option>
-                    <option value="collection">Collection</option>
-                  </select>
+                  <Select
+                    label="Hold Type"
+                    options={[
+                      { value: "client-request", label: "Client Request" },
+                      { value: "billing-review", label: "Billing Review" },
+                      { value: "dispute", label: "Dispute" },
+                      { value: "collection", label: "Collection" },
+                    ]}
+                    placeholder="Select hold type"
+                    onChange={() => {}}
+                    fullWidth
+                  />
                 </div>
 
                 {/* Reason for Holding */}
@@ -1340,19 +1342,19 @@ export default function PrebillDetail() {
 
                 {/* Assigned Biller */}
                 <div>
-                  <label className="block text-sm font-medium text-xtnd-dark mb-2">
-                    Assigned Biller
-                  </label>
-                  <div className="relative">
-                    <select className="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent">
-                      <option value="">Select Biller</option>
-                      <option value="biller1">John Doe</option>
-                      <option value="biller2">Jane Smith</option>
-                      <option value="biller3">Alan Shore</option>
-                    </select>
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                      <HiUsers className="h-4 w-4 text-gray-400" />
-                    </div>
+                  <div>
+                    <Select
+                      label=" Assigned Biller"
+                      options={[
+                        { value: "client-request", label: "John Doe" },
+                        { value: "billing-review", label: "Jane Smith" },
+                        { value: "dispute", label: "Alan Shore" },
+                        { value: "collection", label: "Michael Scott" },
+                      ]}
+                      placeholder="Select biller"
+                      onChange={() => {}}
+                      fullWidth
+                    />
                   </div>
                 </div>
 
@@ -1769,7 +1771,9 @@ export default function PrebillDetail() {
                   AS
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 mb-0.5">Last Updated By</p>
+                  <p className="text-sm text-gray-500 mb-0.5">
+                    Last Updated By
+                  </p>
                   <p className="text-lg font-semibold text-xtnd-dark">
                     Alan Shore
                   </p>

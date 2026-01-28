@@ -18,7 +18,8 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     { children, variant = "default", size = "md", className = "", ...props },
     ref,
   ) => {
-    const baseClasses = "inline-flex items-center font-medium rounded-full";
+    const baseClasses =
+      "inline-flex items-center font-medium rounded-full whitespace-nowrap";
 
     const sizeClasses = {
       sm: "px-2 py-1 text-xs",
