@@ -28,6 +28,7 @@ import {
   HiDownload,
   HiEye,
   HiViewGrid,
+  HiDuplicate,
   HiViewList,
 } from "react-icons/hi";
 import { RxCounterClockwiseClock } from "react-icons/rx";
@@ -36,6 +37,11 @@ import { AiOutlineSwap } from "react-icons/ai";
 import { invoicesMockData } from "../mock-data";
 import DatePicker from "./DatePicker";
 import Select from "./Select";
+import Checkbox from "./Checkbox";
+import { FilterProvider, useFilters } from "./filter/FilterProvider";
+import { FilterButton } from "./filter/FilterButton";
+import { FilterDrawer } from "./filter/FilterDrawer";
+import { FilterChips } from "./filter/FilterChips";
 
 // Mock fee entry data
 interface FeeEntry {
@@ -50,6 +56,18 @@ interface FeeEntry {
   hours: number;
   amount: number;
   noCharge: boolean;
+}
+
+// Fee filters interface
+interface FeeFilters {
+  onlyMyItems: boolean;
+  notes: boolean;
+  lateAdded: boolean;
+  outstanding: boolean;
+  completed: boolean;
+  deleted: boolean;
+  violation: boolean;
+  [key: string]: unknown;
 }
 
 // Mock comment data
@@ -276,6 +294,228 @@ const mockFeeEntries: FeeEntry[] = [
     amount: 1505.48,
     noCharge: false,
   },
+  {
+    id: "2",
+    date: "05/06/2025",
+    services:
+      "Research and analysis of prior case law regarding contract disputes",
+    attorney: "ATT1",
+    activityCode: "A101",
+    taskCode: "L120",
+    eventCode: "7988125541",
+    ratePerHour: 250.0,
+    hours: 3.0,
+    amount: 750.0,
+    noCharge: false,
+  },
+  {
+    id: "3",
+    date: "05/06/2025",
+    services: "Draft initial complaint and supporting memorandum",
+    attorney: "ATT2",
+    activityCode: "A102",
+    taskCode: "L130",
+    eventCode: "7988125542",
+    ratePerHour: 275.5,
+    hours: 5.5,
+    amount: 1515.25,
+    noCharge: false,
+  },
+  {
+    id: "4",
+    date: "05/07/2025",
+    services: "Client conference call to discuss litigation strategy",
+    attorney: "ATT3",
+    activityCode: "A103",
+    taskCode: "L140",
+    eventCode: "7988125543",
+    ratePerHour: 200.73,
+    hours: 1.5,
+    amount: 301.1,
+    noCharge: false,
+  },
+  {
+    id: "5",
+    date: "05/07/2025",
+    services: "Review and analyze opposing counsel's motion to dismiss",
+    attorney: "ATT1",
+    activityCode: "A104",
+    taskCode: "L150",
+    eventCode: "7988125544",
+    ratePerHour: 250.0,
+    hours: 4.0,
+    amount: 1000.0,
+    noCharge: false,
+  },
+  {
+    id: "6",
+    date: "05/08/2025",
+    services: "Prepare response brief to motion to dismiss",
+    attorney: "ATT2",
+    activityCode: "A105",
+    taskCode: "L160",
+    eventCode: "7988125545",
+    ratePerHour: 275.5,
+    hours: 6.0,
+    amount: 1653.0,
+    noCharge: false,
+  },
+  {
+    id: "7",
+    date: "05/08/2025",
+    services: "Coordinate with expert witness on technical matters",
+    attorney: "ATT4",
+    activityCode: "A106",
+    taskCode: "L170",
+    eventCode: "7988125546",
+    ratePerHour: 185.25,
+    hours: 2.0,
+    amount: 370.5,
+    noCharge: true,
+  },
+  {
+    id: "8",
+    date: "05/09/2025",
+    services: "Attend court hearing on preliminary motions",
+    attorney: "ATT1",
+    activityCode: "A107",
+    taskCode: "L180",
+    eventCode: "7988125547",
+    ratePerHour: 250.0,
+    hours: 3.5,
+    amount: 875.0,
+    noCharge: false,
+  },
+  {
+    id: "9",
+    date: "05/09/2025",
+    services: "Document review and privilege analysis for discovery requests",
+    attorney: "ATT3",
+    activityCode: "A108",
+    taskCode: "L190",
+    eventCode: "7988125548",
+    ratePerHour: 200.73,
+    hours: 8.0,
+    amount: 1605.84,
+    noCharge: false,
+  },
+  {
+    id: "10",
+    date: "05/10/2025",
+    services: "Prepare and serve interrogatories and document requests",
+    attorney: "ATT2",
+    activityCode: "A109",
+    taskCode: "L200",
+    eventCode: "7988125549",
+    ratePerHour: 275.5,
+    hours: 4.5,
+    amount: 1239.75,
+    noCharge: false,
+  },
+  {
+    id: "11",
+    date: "05/10/2025",
+    services: "Internal team meeting to review case progress and strategy",
+    attorney: "ATT1",
+    activityCode: "A110",
+    taskCode: "L210",
+    eventCode: "7988125550",
+    ratePerHour: 250.0,
+    hours: 1.0,
+    amount: 250.0,
+    noCharge: false,
+  },
+  {
+    id: "12",
+    date: "05/11/2025",
+    services: "Deposition preparation and witness outline development",
+    attorney: "ATT4",
+    activityCode: "A111",
+    taskCode: "L220",
+    eventCode: "7988125551",
+    ratePerHour: 185.25,
+    hours: 5.0,
+    amount: 926.25,
+    noCharge: false,
+  },
+  {
+    id: "13",
+    date: "05/12/2025",
+    services: "Conduct deposition of defendant's key witness",
+    attorney: "ATT1",
+    activityCode: "A112",
+    taskCode: "L230",
+    eventCode: "7988125552",
+    ratePerHour: 250.0,
+    hours: 6.5,
+    amount: 1625.0,
+    noCharge: false,
+  },
+  {
+    id: "14",
+    date: "05/12/2025",
+    services: "Post-deposition analysis and memorandum preparation",
+    attorney: "ATT2",
+    activityCode: "A113",
+    taskCode: "L240",
+    eventCode: "7988125553",
+    ratePerHour: 275.5,
+    hours: 3.0,
+    amount: 826.5,
+    noCharge: false,
+  },
+  {
+    id: "15",
+    date: "05/13/2025",
+    services: "Review financial documents produced in discovery",
+    attorney: "ATT3",
+    activityCode: "A114",
+    taskCode: "L250",
+    eventCode: "7988125554",
+    ratePerHour: 200.73,
+    hours: 7.0,
+    amount: 1405.11,
+    noCharge: false,
+  },
+  {
+    id: "16",
+    date: "05/13/2025",
+    services: "Correspondence with opposing counsel regarding scheduling",
+    attorney: "ATT4",
+    activityCode: "A115",
+    taskCode: "L260",
+    eventCode: "7988125555",
+    ratePerHour: 185.25,
+    hours: 0.5,
+    amount: 92.63,
+    noCharge: true,
+  },
+  {
+    id: "17",
+    date: "05/14/2025",
+    services: "Draft motion for summary judgment",
+    attorney: "ATT1",
+    activityCode: "A116",
+    taskCode: "L270",
+    eventCode: "7988125556",
+    ratePerHour: 250.0,
+    hours: 8.0,
+    amount: 2000.0,
+    noCharge: false,
+  },
+  {
+    id: "18",
+    date: "05/14/2025",
+    services: "Legal research on damages calculation methodology",
+    attorney: "ATT2",
+    activityCode: "A117",
+    taskCode: "L280",
+    eventCode: "7988125557",
+    ratePerHour: 275.5,
+    hours: 4.0,
+    amount: 1102.0,
+    noCharge: false,
+  },
 ];
 
 type TabKey =
@@ -287,6 +527,56 @@ type TabKey =
   | "matterMaintenance"
   | "clientMaintenance"
   | "general";
+
+// Fee filter content component for the drawer
+function FeeFilterContent() {
+  const { draft, setDraft } = useFilters();
+  const filters = (draft || {}) as FeeFilters;
+
+  return (
+    <div className="space-y-4">
+      <Checkbox
+        checked={filters.onlyMyItems || false}
+        onChange={(e) =>
+          setDraft({ ...filters, onlyMyItems: e.target.checked })
+        }
+        label="Only My Items"
+      />
+      <Checkbox
+        checked={filters.notes || false}
+        onChange={(e) => setDraft({ ...filters, notes: e.target.checked })}
+        label="Notes"
+      />
+      <Checkbox
+        checked={filters.lateAdded || false}
+        onChange={(e) => setDraft({ ...filters, lateAdded: e.target.checked })}
+        label="Late Added"
+      />
+      <Checkbox
+        checked={filters.outstanding || false}
+        onChange={(e) =>
+          setDraft({ ...filters, outstanding: e.target.checked })
+        }
+        label="Outstanding"
+      />
+      <Checkbox
+        checked={filters.completed || false}
+        onChange={(e) => setDraft({ ...filters, completed: e.target.checked })}
+        label="Completed"
+      />
+      <Checkbox
+        checked={filters.deleted || false}
+        onChange={(e) => setDraft({ ...filters, deleted: e.target.checked })}
+        label="Deleted"
+      />
+      <Checkbox
+        checked={filters.violation || false}
+        onChange={(e) => setDraft({ ...filters, violation: e.target.checked })}
+        label="Violation"
+      />
+    </div>
+  );
+}
 
 export default function PrebillDetail() {
   const { invoiceId } = useParams<{ invoiceId: string }>();
@@ -318,6 +608,29 @@ export default function PrebillDetail() {
   });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Action section state
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
+  const [isRolloverActive, setIsRolloverActive] = useState(false);
+  const [isOnHold, setIsOnHold] = useState(false);
+  const [isCollaboratorsModalOpen, setIsCollaboratorsModalOpen] =
+    useState(false);
+  const [isAssistantsModalOpen, setIsAssistantsModalOpen] = useState(false);
+  const [selectedCollaborators, setSelectedCollaborators] = useState<string[]>([
+    "U1",
+    "U2",
+    "U3",
+  ]);
+  const [selectedAssistants, setSelectedAssistants] = useState<string[]>([]);
+
+  // Mock users for collaborators/assistants selection
+  const mockUsers = [
+    { id: "U1", name: "Alan Shore", initials: "AS" },
+    { id: "U2", name: "Denny Crane", initials: "DC" },
+    { id: "U3", name: "Shirley Schmidt", initials: "SS" },
+    { id: "U4", name: "Paul Lewiston", initials: "PL" },
+    { id: "U5", name: "Brad Chase", initials: "BC" },
+  ];
+
   // Attachments tab state
   const [attachmentSearch, setAttachmentSearch] = useState("");
   const [attachmentViewMode, setAttachmentViewMode] = useState<"list" | "grid">(
@@ -336,6 +649,55 @@ export default function PrebillDetail() {
   const [isEditExpenseDescModalOpen, setIsEditExpenseDescModalOpen] =
     useState(false);
   const [editingExpenseDesc, setEditingExpenseDesc] = useState("");
+
+  // Fees tab state
+  const [feeEntries, setFeeEntries] = useState<FeeEntry[]>(mockFeeEntries);
+  const [feesCurrentPage, setFeesCurrentPage] = useState(1);
+  const [isFeeFilterOpen, setIsFeeFilterOpen] = useState(false);
+  const feesPerPage = 5;
+  const totalFeeEntries = feeEntries.length;
+  const paginatedFeeEntries = feeEntries.slice(
+    (feesCurrentPage - 1) * feesPerPage,
+    feesCurrentPage * feesPerPage,
+  );
+
+  const handleDuplicateFee = (entry: FeeEntry) => {
+    const newEntry: FeeEntry = {
+      ...entry,
+      id: `${Date.now()}`,
+      services: `${entry.services} (Copy)`,
+    };
+    setFeeEntries((prev) => [...prev, newEntry]);
+  };
+
+  // Matter Maintenance tab state
+  const [matterMaintenance, setMatterMaintenance] = useState({
+    matterRequiresAdminReview: false,
+    disableInvoiceAutomation: false,
+    ledesZipCode: "33131",
+    carrierMatterId: "",
+    carrierMatterEmail: "",
+    carrierMatterName: "",
+    carrierFirmName: "",
+    carrierClientName: "",
+  });
+
+  // Mock Clio Reference Data
+  const clioReferenceData = {
+    adjuster: "",
+    claimant: "",
+    claimNo: "",
+    alternateClientId: "",
+    alternateLawFirmId: "",
+    alternateInvoiceDescription: "",
+  };
+
+  // Client Maintenance tab state
+  const [clientMaintenance, setClientMaintenance] = useState({
+    clientRequiresAdminReview: false,
+    disablePdfInvoiceEmail: false,
+    clientEmail: "",
+  });
 
   // Mock attachment data
   const mockAttachments = [
@@ -642,6 +1004,141 @@ export default function PrebillDetail() {
         </div>
       </div>
 
+      {/* Action Section */}
+      <div className="mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div className="flex items-center justify-between">
+          {/* Left side - Toggles */}
+          <div className="flex items-center gap-8">
+            {/* Edit Mode Toggle */}
+            <div className="flex items-center gap-3">
+              <HiPencil className="h-5 w-5 text-gray-400" />
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Edit Mode
+                </span>
+                <span
+                  className={`text-sm font-medium ${isEditModeEnabled ? "text-xtnd-blue" : "text-gray-600"}`}
+                >
+                  {isEditModeEnabled ? "Enabled" : "Disabled"}
+                </span>
+              </div>
+              <button
+                onClick={() => setIsEditModeEnabled(!isEditModeEnabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isEditModeEnabled ? "bg-xtnd-blue" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isEditModeEnabled ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Rollover Toggle */}
+            <div className="flex items-center gap-3">
+              <HiSync className="h-5 w-5 text-gray-400" />
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Rollover
+                </span>
+                <span
+                  className={`text-sm font-medium ${isRolloverActive ? "text-xtnd-blue" : "text-gray-600"}`}
+                >
+                  {isRolloverActive ? "Active" : "Inactive"}
+                </span>
+              </div>
+              <button
+                onClick={() => setIsRolloverActive(!isRolloverActive)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isRolloverActive ? "bg-xtnd-blue" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isRolloverActive ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* On Hold Toggle */}
+            <div className="flex items-center gap-3">
+              <HiClock className="h-5 w-5 text-gray-400" />
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  On Hold
+                </span>
+                <span
+                  className={`text-sm font-medium ${isOnHold ? "text-orange-500" : "text-gray-600"}`}
+                >
+                  {isOnHold ? "On Hold" : "Released"}
+                </span>
+              </div>
+              <button
+                onClick={() => setIsOnHold(!isOnHold)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isOnHold ? "bg-orange-500" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isOnHold ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* Right side - User Avatars and Buttons */}
+          <div className="flex items-center gap-4">
+            {/* User Avatars */}
+            <div className="flex items-center -space-x-2">
+              {selectedCollaborators.slice(0, 3).map((userId, index) => {
+                const user = mockUsers.find((u) => u.id === userId);
+                return (
+                  <div
+                    key={userId}
+                    className="h-8 w-8 rounded-full bg-xtnd-blue text-white flex items-center justify-center text-xs font-medium border-2 border-white"
+                    title={user?.name || userId}
+                  >
+                    {user?.initials || userId}
+                  </div>
+                );
+              })}
+              {selectedCollaborators.length > 3 && (
+                <div className="h-8 w-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs font-medium border-2 border-white">
+                  +{selectedCollaborators.length - 3}
+                </div>
+              )}
+            </div>
+
+            {/* Collaborators Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsCollaboratorsModalOpen(true)}
+              className="!px-4"
+            >
+              <HiUsers className="h-4 w-4 mr-2" />
+              Collaborators
+            </Button>
+
+            {/* Assistants Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAssistantsModalOpen(true)}
+              className="!px-4"
+            >
+              <HiUsers className="h-4 w-4 mr-2" />
+              Assistants
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Tabs */}
       <div className="border-b border-gray-200 mb-6">
         <div className="flex gap-1">
@@ -663,238 +1160,311 @@ export default function PrebillDetail() {
 
       {/* Tab Content */}
       {activeTab === "fees" && (
-        <div className="space-y-6">
-          {/* Matter Information Card */}
-          <Card variant="elevated" padding="lg">
-            <CardBody>
-              <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
-                    Matter:
-                  </label>
-                  <p className="text-sm text-xtnd-dark">
-                    {invoice.matter.displayNumber} - {invoice.matter.name}
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
-                    Billing Address:
-                  </label>
-                  <p className="text-sm text-xtnd-dark">
-                    {invoice.matter.billAttorney.name}
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
-                    Client Deductible:
-                  </label>
-                  <p className="text-sm text-xtnd-dark">$0.00</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
-                    Matter Trust Bal:
-                  </label>
-                  <p className="text-sm text-xtnd-dark">$0.00</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
-                    Main Rate Agreement:
-                  </label>
-                  <p className="text-sm text-xtnd-dark">-</p>
-                </div>
-              </div>
-
-              {/* See More Section */}
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <button
-                  onClick={() => setShowMore(!showMore)}
-                  className="flex items-center gap-2 text-sm text-xtnd-blue transition-colors"
-                >
-                  <span>See More</span>
-                  {showMore ? (
-                    <HiChevronDown className="h-4 w-4" />
-                  ) : (
-                    <HiChevronRight className="h-4 w-4" />
-                  )}
-                </button>
-                {showMore && (
-                  <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
-                        Client:
-                      </label>
-                      <p className="text-sm text-xtnd-dark">
-                        {invoice.matter.client.name}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
-                        Billing Method:
-                      </label>
-                      <p className="text-sm text-xtnd-dark capitalize">
-                        {invoice.matter.metadata.billingMethod}
-                      </p>
-                    </div>
+        <FilterProvider>
+          <div className="space-y-6">
+            {/* Matter Information Card */}
+            <Card variant="elevated" padding="lg">
+              <CardBody>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                      Matter:
+                    </label>
+                    <p className="text-sm text-xtnd-dark">
+                      {invoice.matter.displayNumber} - {invoice.matter.name}
+                    </p>
                   </div>
-                )}
-              </div>
-            </CardBody>
-          </Card>
-
-          {/* Billable Time Section */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-6">
-                <h3 className="text-base font-semibold text-xtnd-dark">
-                  Billable Time (1)
-                </h3>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-xtnd-dark-500">
-                    Pending Time Entry Edits:
-                  </span>
-                  <span className="text-sm font-medium px-2 py-0.5 bg-xtnd-blue text-white rounded">
-                    0/1
-                  </span>
+                  <div>
+                    <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                      Billing Address:
+                    </label>
+                    <p className="text-sm text-xtnd-dark">
+                      {invoice.matter.billAttorney.name}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                      Client Deductible:
+                    </label>
+                    <p className="text-sm text-xtnd-dark">$0.00</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                      Matter Trust Bal:
+                    </label>
+                    <p className="text-sm text-xtnd-dark">$0.00</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                      Main Rate Agreement:
+                    </label>
+                    <p className="text-sm text-xtnd-dark">-</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-xtnd-dark-500">
-                    Pending Billing Edits:
-                  </span>
-                  <span className="text-sm font-medium px-2 py-0.5 bg-xtnd-blue text-white rounded">
-                    0/1
-                  </span>
+
+                {/* See More Section */}
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <button
+                    onClick={() => setShowMore(!showMore)}
+                    className="flex items-center gap-2 text-sm text-xtnd-blue transition-colors"
+                  >
+                    <span>See More</span>
+                    {showMore ? (
+                      <HiChevronDown className="h-4 w-4" />
+                    ) : (
+                      <HiChevronRight className="h-4 w-4" />
+                    )}
+                  </button>
+                  {showMore && (
+                    <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                          Client:
+                        </label>
+                        <p className="text-sm text-xtnd-dark">
+                          {invoice.matter.client.name}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-xtnd-dark-500 mb-1">
+                          Billing Method:
+                        </label>
+                        <p className="text-sm text-xtnd-dark capitalize">
+                          {invoice.matter.metadata.billingMethod}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+
+            {/* Billable Time Section */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-6">
+                  <h3 className="text-base font-semibold text-xtnd-dark">
+                    Billable Time (1)
+                  </h3>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm text-xtnd-dark-500">
+                      Pending Time Entry Edits:
+                    </span>
+                    <span className="text-sm font-medium px-2 py-0.5 bg-xtnd-blue text-white rounded">
+                      0/1
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm text-xtnd-dark-500">
+                      Pending Billing Edits:
+                    </span>
+                    <span className="text-sm font-medium px-2 py-0.5 bg-xtnd-blue text-white rounded">
+                      0/1
+                    </span>
+                  </div>
+                </div>
+
+                {/* Search Box and Filter */}
+                <div className="flex items-center gap-2">
+                  <div className="relative w-64">
+                    <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search..."
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
+                      className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent"
+                    />
+                  </div>
+                  <FilterButton onClick={() => setIsFeeFilterOpen(true)} />
                 </div>
               </div>
 
-              {/* Search Box */}
-              <div className="relative w-64">
-                <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent"
-                />
-              </div>
-            </div>
+              {/* Filter Chips */}
+              <FilterChips
+                labels={{
+                  onlyMyItems: "Only My Items",
+                  notes: "Notes",
+                  lateAdded: "Late Added",
+                  outstanding: "Outstanding",
+                  completed: "Completed",
+                  deleted: "Deleted",
+                  violation: "Violation",
+                }}
+              />
 
-            {/* Fee Entries Table */}
-            <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-xtnd-light border-b-2 border-xtnd-blue">
-                    <tr>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">Date</div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">Services</div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">Attorney</div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">
-                          Activity Code
-                        </div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">Task Code</div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">Event Code</div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">Rate/Hr.</div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">Hours</div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">Amount</div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">No Charge</div>
-                      </th>
-                      <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
-                        <div className="h-12 flex items-center">Actions</div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mockFeeEntries.map((entry) => (
-                      <tr
-                        key={entry.id}
-                        className="border-b border-gray-100 hover:bg-gray-50"
-                      >
-                        <td className="py-3 px-4 text-sm text-xtnd-dark">
-                          {entry.date}
-                        </td>
-                        <td className="py-3 px-4 text-sm text-xtnd-dark max-w-xs">
-                          <div className="line-clamp-2">{entry.services}</div>
-                        </td>
-                        <td className="py-3 px-4 text-sm text-xtnd-dark">
-                          {entry.attorney}
-                        </td>
-                        <td className="py-3 px-4 text-sm text-xtnd-dark">
-                          {entry.activityCode}
-                        </td>
-                        <td className="py-3 px-4 text-sm text-xtnd-dark">
-                          {entry.taskCode}
-                        </td>
-                        <td className="py-3 px-4 text-sm text-xtnd-dark">
-                          {entry.eventCode}
-                        </td>
-                        <td className="py-3 px-4 text-sm text-xtnd-dark">
-                          {entry.ratePerHour.toFixed(2)}
-                        </td>
-                        <td className="py-3 px-4 text-sm text-xtnd-dark">
-                          {entry.hours}
-                        </td>
-                        <td className="py-3 px-4 text-sm text-xtnd-dark font-medium">
-                          {entry.amount.toFixed(2)}
-                        </td>
-                        <td className="py-3 px-4 text-center">
-                          <input
-                            type="checkbox"
-                            checked={entry.noCharge}
-                            readOnly
-                            className="h-4 w-4 text-xtnd-blue rounded border-gray-300 focus:ring-xtnd-blue"
-                          />
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleEditEntry(entry)}
-                              className="text-xtnd-blue hover:text-xtnd-dark transition-colors"
-                              title="Edit"
-                            >
-                              <HiPencil className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleAddNote(entry)}
-                              className="text-xtnd-blue hover:text-xtnd-dark transition-colors"
-                              title="Add Note"
-                            >
-                              <HiChatAlt className="h-4 w-4" />
-                            </button>
-                            <button
-                              className="text-red-500 hover:text-red-700 transition-colors"
-                              title="Delete"
-                            >
-                              <HiTrash className="h-4 w-4" />
-                            </button>
+              {/* Filter Drawer */}
+              <FilterDrawer
+                open={isFeeFilterOpen}
+                onClose={() => setIsFeeFilterOpen(false)}
+                title="Fee Filters"
+              >
+                <FeeFilterContent />
+              </FilterDrawer>
+
+              {/* Fee Entries Table */}
+              <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden mt-4">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-xtnd-light border-b-2 border-xtnd-blue">
+                      <tr>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">Date</div>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">Services</div>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">Attorney</div>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">
+                            Activity Code
                           </div>
-                        </td>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">
+                            Task Code
+                          </div>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">
+                            Event Code
+                          </div>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">Rate/Hr.</div>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">Hours</div>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">Amount</div>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">
+                            No Charge
+                          </div>
+                        </th>
+                        <th className="text-left text-xs text-xtnd-dark font-semibold uppercase px-4">
+                          <div className="h-12 flex items-center">Actions</div>
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {paginatedFeeEntries.map((entry) => (
+                        <tr
+                          key={entry.id}
+                          className="border-b border-gray-100 hover:bg-gray-50"
+                        >
+                          <td className="py-3 px-4 text-sm text-xtnd-dark">
+                            {entry.date}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-xtnd-dark max-w-xs">
+                            <div className="line-clamp-2">{entry.services}</div>
+                          </td>
+                          <td className="py-3 px-4 text-sm text-xtnd-dark">
+                            {entry.attorney}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-xtnd-dark">
+                            {entry.activityCode}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-xtnd-dark">
+                            {entry.taskCode}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-xtnd-dark">
+                            {entry.eventCode}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-xtnd-dark">
+                            {entry.ratePerHour.toFixed(2)}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-xtnd-dark">
+                            {entry.hours}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-xtnd-dark font-medium">
+                            {entry.amount.toFixed(2)}
+                          </td>
+                          <td className="py-3 px-4 text-center">
+                            <input
+                              type="checkbox"
+                              checked={entry.noCharge}
+                              readOnly
+                              className="h-4 w-4 text-xtnd-blue rounded border-gray-300 focus:ring-xtnd-blue"
+                            />
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleEditEntry(entry)}
+                                className="text-xtnd-blue hover:text-xtnd-dark transition-colors"
+                                title="Edit"
+                              >
+                                <HiPencil className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDuplicateFee(entry)}
+                                className="text-xtnd-blue hover:text-xtnd-dark transition-colors"
+                                title="Duplicate"
+                              >
+                                <HiDuplicate className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleAddNote(entry)}
+                                className="text-xtnd-blue hover:text-xtnd-dark transition-colors"
+                                title="Add Note"
+                              >
+                                <HiChatAlt className="h-4 w-4" />
+                              </button>
+                              <button
+                                className="text-red-500 hover:text-red-700 transition-colors"
+                                title="Delete"
+                              >
+                                <HiTrash className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="flex justify-between items-center p-4 border-t border-gray-200">
+                  <div className="text-sm text-xtnd-dark">
+                    Showing {Math.min(paginatedFeeEntries.length, feesPerPage)}{" "}
+                    of {totalFeeEntries} fee entries
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() =>
+                        setFeesCurrentPage((p) => Math.max(1, p - 1))
+                      }
+                      disabled={feesCurrentPage === 1}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Prev
+                    </Button>
+                    <div className="px-3 text-sm text-xtnd-dark">
+                      {feesCurrentPage}
+                    </div>
+                    <Button
+                      onClick={() => setFeesCurrentPage((p) => p + 1)}
+                      disabled={
+                        feesCurrentPage * feesPerPage >= totalFeeEntries
+                      }
+                      variant="outline"
+                      size="sm"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </FilterProvider>
       )}
 
       {/* Expenses Tab */}
@@ -2532,13 +3102,447 @@ export default function PrebillDetail() {
         </div>
       )}
 
+      {/* Matter Maintenance Tab */}
+      {activeTab === "matterMaintenance" && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
+          {/* Left Side - Matter Maintenance Form */}
+          <div>
+            <h3 className="text-lg font-semibold text-xtnd-dark mb-6">
+              Matter Maintenance
+            </h3>
+            <div className="space-y-4">
+              {/* Matter Code - Read Only */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-2 flex-shrink-0">
+                  Matter Code
+                </label>
+                <div className="flex-1">
+                  <span className="text-sm text-xtnd-dark">
+                    {invoice.matter.displayNumber || "02304"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Name - Read Only */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-2 flex-shrink-0">
+                  Name
+                </label>
+                <div className="flex-1">
+                  <span className="text-sm text-xtnd-dark hover:underline cursor-pointer">
+                    {invoice.matter.name || "Document Preparation"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Matter Requires Admin Review - Toggle */}
+              <div className="flex items-center">
+                <label className="w-48 text-sm text-xtnd-dark flex-shrink-0">
+                  Matter Requires Admin Review
+                </label>
+                <div className="flex-1">
+                  <button
+                    onClick={() =>
+                      setMatterMaintenance({
+                        ...matterMaintenance,
+                        matterRequiresAdminReview:
+                          !matterMaintenance.matterRequiresAdminReview,
+                      })
+                    }
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      matterMaintenance.matterRequiresAdminReview
+                        ? "bg-xtnd-blue"
+                        : "bg-gray-300"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        matterMaintenance.matterRequiresAdminReview
+                          ? "translate-x-6"
+                          : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+
+              {/* Disable Invoice Automation - Toggle */}
+              <div className="flex items-center">
+                <label className="w-48 text-sm text-xtnd-dark flex-shrink-0">
+                  Disable Invoice Automation
+                </label>
+                <div className="flex-1">
+                  <button
+                    onClick={() =>
+                      setMatterMaintenance({
+                        ...matterMaintenance,
+                        disableInvoiceAutomation:
+                          !matterMaintenance.disableInvoiceAutomation,
+                      })
+                    }
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      matterMaintenance.disableInvoiceAutomation
+                        ? "bg-xtnd-blue"
+                        : "bg-gray-300"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        matterMaintenance.disableInvoiceAutomation
+                          ? "translate-x-6"
+                          : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+
+              {/* Ledes Zip Code - Input */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-2 flex-shrink-0">
+                  Ledes Zip Code
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={matterMaintenance.ledesZipCode}
+                    onChange={(e) =>
+                      setMatterMaintenance({
+                        ...matterMaintenance,
+                        ledesZipCode: e.target.value,
+                      })
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              {/* Carrier Matter ID / Claim No. - Input */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-2 flex-shrink-0">
+                  Carrier Matter ID / Claim No.
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={matterMaintenance.carrierMatterId}
+                    onChange={(e) =>
+                      setMatterMaintenance({
+                        ...matterMaintenance,
+                        carrierMatterId: e.target.value,
+                      })
+                    }
+                    placeholder="Carrier Matter ID / Claim No."
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent placeholder-xtnd-blue/50"
+                  />
+                </div>
+              </div>
+
+              {/* Carrier Matter Email - Input */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-2 flex-shrink-0">
+                  Carrier Matter Email
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="email"
+                    value={matterMaintenance.carrierMatterEmail}
+                    onChange={(e) =>
+                      setMatterMaintenance({
+                        ...matterMaintenance,
+                        carrierMatterEmail: e.target.value,
+                      })
+                    }
+                    placeholder="Carrier Matter Email"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent placeholder-xtnd-blue/50"
+                  />
+                </div>
+              </div>
+
+              {/* Carrier Matter Name - Input */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-2 flex-shrink-0">
+                  Carrier Matter Name
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={matterMaintenance.carrierMatterName}
+                    onChange={(e) =>
+                      setMatterMaintenance({
+                        ...matterMaintenance,
+                        carrierMatterName: e.target.value,
+                      })
+                    }
+                    placeholder="Carrier Matter Name"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent placeholder-xtnd-blue/50"
+                  />
+                </div>
+              </div>
+
+              {/* Carrier Firm Name - Input */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-2 flex-shrink-0">
+                  Carrier Firm Name
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={matterMaintenance.carrierFirmName}
+                    onChange={(e) =>
+                      setMatterMaintenance({
+                        ...matterMaintenance,
+                        carrierFirmName: e.target.value,
+                      })
+                    }
+                    placeholder="Carrier Firm Name"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent placeholder-xtnd-blue/50"
+                  />
+                </div>
+              </div>
+
+              {/* Carrier Client Name - Input */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-2 flex-shrink-0">
+                  Carrier Client Name
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={matterMaintenance.carrierClientName}
+                    onChange={(e) =>
+                      setMatterMaintenance({
+                        ...matterMaintenance,
+                        carrierClientName: e.target.value,
+                      })
+                    }
+                    placeholder="Carrier Client Name"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent placeholder-xtnd-blue/50"
+                  />
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <div className="pt-4">
+                <Button variant="primary" size="sm">
+                  Save
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Clio Reference Data */}
+          <div>
+            <h3 className="text-lg font-semibold text-xtnd-dark mb-6">
+              Clio Reference Data
+            </h3>
+            <div className="space-y-4">
+              {/* Adjuster - Read Only */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-1 flex-shrink-0">
+                  Adjuster
+                </label>
+                <div className="flex-1">
+                  <span className="text-sm text-xtnd-dark">
+                    {clioReferenceData.adjuster || "-"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Claimant - Read Only */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-1 flex-shrink-0">
+                  Claimant
+                </label>
+                <div className="flex-1">
+                  <span className="text-sm text-xtnd-dark">
+                    {clioReferenceData.claimant || "-"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Claim No - Read Only */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-1 flex-shrink-0">
+                  Claim No
+                </label>
+                <div className="flex-1">
+                  <span className="text-sm text-xtnd-dark">
+                    {clioReferenceData.claimNo || "-"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Alternate Client ID - Read Only */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-1 flex-shrink-0">
+                  Alternate Client ID
+                </label>
+                <div className="flex-1">
+                  <span className="text-sm text-xtnd-dark">
+                    {clioReferenceData.alternateClientId || "-"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Alternate Law Firm ID - Read Only */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-1 flex-shrink-0">
+                  Alternate Law Firm ID
+                </label>
+                <div className="flex-1">
+                  <span className="text-sm text-xtnd-dark">
+                    {clioReferenceData.alternateLawFirmId || "-"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Alternate Invoice Description - Read Only */}
+              <div className="flex items-start">
+                <label className="w-48 text-sm text-xtnd-dark pt-1 flex-shrink-0">
+                  Alternate Invoice Description
+                </label>
+                <div className="flex-1">
+                  <span className="text-sm text-xtnd-dark">
+                    {clioReferenceData.alternateInvoiceDescription || "-"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Client Maintenance Tab */}
+      {activeTab === "clientMaintenance" && (
+        <div className="max-w-xl">
+          <div className="space-y-5">
+            {/* Client Code - Read Only */}
+            <div className="flex items-start">
+              <label className="w-56 text-sm text-xtnd-dark pt-1 flex-shrink-0">
+                Client Code
+              </label>
+              <div className="flex-1">
+                <span className="text-sm text-xtnd-dark">
+                  {invoice.matter.client.cltCode || "-"}
+                </span>
+              </div>
+            </div>
+
+            {/* Name - Read Only */}
+            <div className="flex items-start">
+              <label className="w-56 text-sm text-xtnd-dark pt-1 flex-shrink-0">
+                Name
+              </label>
+              <div className="flex-1">
+                <span className="text-sm text-xtnd-dark">
+                  {invoice.matter.client.name || "Ryan Nelson"}
+                </span>
+              </div>
+            </div>
+
+            {/* Client Requires Admin Review - Toggle */}
+            <div className="flex items-center">
+              <label className="w-56 text-sm text-xtnd-dark flex-shrink-0">
+                Client Requires Admin Review
+              </label>
+              <div className="flex-1">
+                <button
+                  onClick={() =>
+                    setClientMaintenance({
+                      ...clientMaintenance,
+                      clientRequiresAdminReview:
+                        !clientMaintenance.clientRequiresAdminReview,
+                    })
+                  }
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    clientMaintenance.clientRequiresAdminReview
+                      ? "bg-xtnd-blue"
+                      : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      clientMaintenance.clientRequiresAdminReview
+                        ? "translate-x-6"
+                        : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            {/* Disable PDF Invoice Email - Toggle */}
+            <div className="flex items-center">
+              <label className="w-56 text-sm text-xtnd-dark flex-shrink-0">
+                Disable PDF Invoice Email
+              </label>
+              <div className="flex-1">
+                <button
+                  onClick={() =>
+                    setClientMaintenance({
+                      ...clientMaintenance,
+                      disablePdfInvoiceEmail:
+                        !clientMaintenance.disablePdfInvoiceEmail,
+                    })
+                  }
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    clientMaintenance.disablePdfInvoiceEmail
+                      ? "bg-xtnd-blue"
+                      : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      clientMaintenance.disablePdfInvoiceEmail
+                        ? "translate-x-6"
+                        : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            {/* Client Email - Input */}
+            <div className="flex items-start">
+              <label className="w-56 text-sm text-xtnd-dark pt-2 flex-shrink-0">
+                Client Email
+              </label>
+              <div className="flex-1">
+                <input
+                  type="email"
+                  value={clientMaintenance.clientEmail}
+                  onChange={(e) =>
+                    setClientMaintenance({
+                      ...clientMaintenance,
+                      clientEmail: e.target.value,
+                    })
+                  }
+                  placeholder="Client Email"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-xtnd-blue focus:border-transparent placeholder-xtnd-blue/50"
+                />
+              </div>
+            </div>
+
+            {/* Save Button */}
+            <div className="pt-4">
+              <Button variant="primary" size="sm">
+                Save
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Other tabs - placeholder content */}
       {activeTab !== "fees" &&
         activeTab !== "summary" &&
         activeTab !== "notes" &&
         activeTab !== "attachments" &&
         activeTab !== "expenses" &&
-        activeTab !== "general" && (
+        activeTab !== "general" &&
+        activeTab !== "matterMaintenance" &&
+        activeTab !== "clientMaintenance" && (
           <div className="py-12 text-center">
             <p className="text-xtnd-dark-500">
               {tabs.find((t) => t.key === activeTab)?.label} content coming soon
@@ -3180,6 +4184,123 @@ export default function PrebillDetail() {
                 !newFee.activityCode ||
                 !newFee.taskCode
               }
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Collaborators Modal */}
+      <Modal
+        isOpen={isCollaboratorsModalOpen}
+        onClose={() => setIsCollaboratorsModalOpen(false)}
+        title="Select Collaborators"
+        size="md"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-500">
+            Select users who can collaborate on this prebill.
+          </p>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {mockUsers.map((user) => (
+              <label
+                key={user.id}
+                className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedCollaborators.includes(user.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedCollaborators([
+                        ...selectedCollaborators,
+                        user.id,
+                      ]);
+                    } else {
+                      setSelectedCollaborators(
+                        selectedCollaborators.filter((id) => id !== user.id),
+                      );
+                    }
+                  }}
+                  className="h-4 w-4 text-xtnd-blue rounded border-gray-300 focus:ring-xtnd-blue"
+                />
+                <div className="h-8 w-8 rounded-full bg-xtnd-blue text-white flex items-center justify-center text-xs font-medium">
+                  {user.initials}
+                </div>
+                <span className="text-sm font-medium text-xtnd-dark">
+                  {user.name}
+                </span>
+              </label>
+            ))}
+          </div>
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+            <Button
+              variant="ghost"
+              onClick={() => setIsCollaboratorsModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => setIsCollaboratorsModalOpen(false)}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Assistants Modal */}
+      <Modal
+        isOpen={isAssistantsModalOpen}
+        onClose={() => setIsAssistantsModalOpen(false)}
+        title="Select Assistants"
+        size="md"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-500">
+            Select assistants for this prebill.
+          </p>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {mockUsers.map((user) => (
+              <label
+                key={user.id}
+                className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedAssistants.includes(user.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedAssistants([...selectedAssistants, user.id]);
+                    } else {
+                      setSelectedAssistants(
+                        selectedAssistants.filter((id) => id !== user.id),
+                      );
+                    }
+                  }}
+                  className="h-4 w-4 text-xtnd-blue rounded border-gray-300 focus:ring-xtnd-blue"
+                />
+                <div className="h-8 w-8 rounded-full bg-xtnd-blue text-white flex items-center justify-center text-xs font-medium">
+                  {user.initials}
+                </div>
+                <span className="text-sm font-medium text-xtnd-dark">
+                  {user.name}
+                </span>
+              </label>
+            ))}
+          </div>
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+            <Button
+              variant="ghost"
+              onClick={() => setIsAssistantsModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => setIsAssistantsModalOpen(false)}
             >
               Save
             </Button>
